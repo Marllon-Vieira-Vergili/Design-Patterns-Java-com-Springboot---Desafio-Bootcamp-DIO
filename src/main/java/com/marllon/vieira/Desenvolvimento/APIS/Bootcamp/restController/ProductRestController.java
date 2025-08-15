@@ -6,6 +6,8 @@ import com.marllon.vieira.Desenvolvimento.APIS.Bootcamp.DTO.response.ProdutoResp
 import com.marllon.vieira.Desenvolvimento.APIS.Bootcamp.services.ProdutoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +30,7 @@ public class ProductRestController {
     private ProdutoService produtoService;
 
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "localizarProduto/{id}")
     public ResponseEntity<ProdutoResponse> encontrarProdutoPelaId(@PathVariable Long id){
 
         Optional<ProdutoResponse> produtoLocalizado = produtoService.encontrarProdutoPelaId(id);
@@ -55,8 +57,6 @@ public class ProductRestController {
     @PostMapping(value = "/adicionarProduto")
     public ResponseEntity<ProdutoResponse> adicionarNovoProduto(@RequestBody ProdutoRequest dadosNovoProduto){
 
-        //Instanciando o produto response
-        ProdutoResponse produtoResponse = produtoService.criarProduto(dadosNovoProduto);
 
         //Verificando se ele foi criado mesmo, tentando encontrar todos os produtos
         List<ProdutoResponse> foiCriado = produtoService.encontrarTodosOsProdutos();
@@ -67,12 +67,17 @@ public class ProductRestController {
                 && Objects.equals(produtoResponse1.nomeProduto(), dadosNovoProduto.nomeProduto()) && produtoResponse1.precoProduto()
                 .equals(dadosNovoProduto.precoProduto()));
 
-        //Se achou, retorna ele pelo response entity
+        //Instanciando o produto response
+        ProdutoResponse produtoResponse = produtoService.criarProduto(dadosNovoProduto);
+
+
+
+        //Se achou, retorna ele pelo response entity (status 302)
         if (b){
-            return ResponseEntity.ok(produtoResponse);
-            //Senão, retorna bad request(400)
+            return ResponseEntity.status(HttpStatus.FOUND).build();
+            //Senão, retorna status 200 ok (criado)
         }else{
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.ok(produtoResponse);
         }
 
 
@@ -81,7 +86,7 @@ public class ProductRestController {
     @PutMapping(value = "/alterarProduto/{id}")
     public ResponseEntity<ProdutoResponse> alterarProduto(@PathVariable Long id,
                                                           @RequestParam String novoNome,
-                                                          @RequestParam BigDecimal novoPreco) throws IllegalArgumentException {
+                                                          @RequestParam BigDecimal novoPreco)  {
 
         //Realizar as atualizações dos dados
         ProdutoResponse response = produtoService.atualizarDadosProdutoEspecifico(id,novoNome,novoPreco);

@@ -32,7 +32,7 @@ public class Produto {
 
     @Column(name = "preco_produto")
     @NotNull(message = "Preço do produto é requerido")
-    @DecimalMin(value = "0,001", message = "O preço precisa ser maior do que zero.")
+    @DecimalMin(value = "0.001", message = "O preço precisa ser maior do que zero.")
     private BigDecimal preco;
 }
 

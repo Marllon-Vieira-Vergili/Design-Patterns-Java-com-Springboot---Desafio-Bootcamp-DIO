@@ -9,9 +9,9 @@ Github: https://github.com/Marllon-Vieira-Vergili
 
 
 
-Minha ideia é fazer uma API simples, de procura de produtos, em um banco de dados em meória (H2)
-e fazer as APIS funcionarem bem com SWAGGER, e também com testes unitários em Mockito e JUNIT que eu aprendi
-a fazer.
+Minha ideia é fazer uma API simples, de procura de produtos, em um banco de dados em memória (H2)
+e fazer as APIS funcionarem bem com SWAGGER, e também alguns testes  em Mockito e JUNIT que eu aprendi
+a fazer.  
 
 
 Estou utilizando neste projeto, as dependências

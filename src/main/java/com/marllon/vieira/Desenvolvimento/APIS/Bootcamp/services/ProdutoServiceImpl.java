@@ -9,12 +9,15 @@ import com.marllon.vieira.Desenvolvimento.APIS.Bootcamp.exception.JaExisteEsseDa
 import com.marllon.vieira.Desenvolvimento.APIS.Bootcamp.exception.ProdutoNaoLocalizadoExc;
 import com.marllon.vieira.Desenvolvimento.APIS.Bootcamp.mapDTO.ProdutoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class ProdutoServiceImpl implements ProdutoService{
 
 
@@ -34,16 +37,18 @@ public class ProdutoServiceImpl implements ProdutoService{
                 produtoResponse.precoProduto().equals(dadosProduto.precoProduto()) && produtoResponse.nomeProduto()
                         .equalsIgnoreCase(dadosProduto.nomeProduto()));
 
-        if (produtoJaExiste == true){
+        //criar o produto novo
+        Produto novoProduto = new Produto();
+        novoProduto.setNomeProduto(dadosProduto.nomeProduto());
+        novoProduto.setPreco(dadosProduto.precoProduto());
+
+        if (produtoJaExiste){
             throw new JaExisteEsseDadoCriadoExc("Não foi possível criar esse produto com o nome: "
                     + dadosProduto.nomeProduto() + ", nem com esse Preço" + dadosProduto.precoProduto() + " Por que " +
                     "ele já existe um igualzinho criado no banco de dados");
         }
 
-        //Senão... criar o produto novo
-        Produto novoProduto = new Produto();
-        novoProduto.setNomeProduto(dadosProduto.nomeProduto());
-        novoProduto.setPreco(dadosProduto.precoProduto());
+
 
         //Persistir no banco os dados
         produtoDAO.save(novoProduto);
@@ -65,9 +70,6 @@ public class ProdutoServiceImpl implements ProdutoService{
     @Override
     public List<ProdutoResponse> encontrarTodosOsProdutos() {
 
-        if (produtoDAO.findAll().isEmpty()){
-            throw new BaseDeDadosVaziaExc("Não foi localizado nenhum elemento na base de dados");
-        }
 
         /*
         * Retornar a lista, usando a interface JPA com o método find all, mapeando todos os produtos encontrados
@@ -77,6 +79,12 @@ public class ProdutoServiceImpl implements ProdutoService{
         return produtoDAO.findAll().stream().map(produto -> new ProdutoResponse(produto.getId(),
                 produto.getNomeProduto(), produto.getPreco())).collect(Collectors.toList());
 
+        //Deu erro na chamada da API, testar sem essa condição
+        /*if (produtoDAO.findAll().isEmpty()){
+            throw new BaseDeDadosVaziaExc("Não foi localizado nenhum elemento na base de dados");
+        }
+
+         */
 
     }
 
